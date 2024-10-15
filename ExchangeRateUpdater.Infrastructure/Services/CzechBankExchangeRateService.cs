@@ -3,6 +3,7 @@ using ExchangeRateUpdater.Application.Contracts;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Enums;
 using ExchangeRateUpdater.Domain.Entities;
+using ExchangeRateUpdater.Infrastructure.Factories;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -13,9 +14,9 @@ public class CzechBankExchangeRateService : ICzechBankExchangeRateService
     private readonly HttpClient _httpClient;
     private readonly IMapper _mapper;
 
-    public CzechBankExchangeRateService(HttpClient httpClient, IMapper mapper)
+    public CzechBankExchangeRateService(IBankApiHttpClientFactory httpClientFactory, IMapper mapper)
     {
-        _httpClient = httpClient;
+        _httpClient = httpClientFactory.CreateClient("CzechBank");
         _mapper = mapper;
     }
 
