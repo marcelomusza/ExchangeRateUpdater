@@ -28,10 +28,14 @@ public class ExchangeRateRepository : IExchangeRateRepository
         }
     }
 
-    public async Task<ExchangeRate> GetExchangeRatesByDayAsync(DateTime date)
+    public async Task<IEnumerable<ExchangeRate>> GetExchangeRatesByDayAsync(DateTime date)
     {
-        return await _context.ExchangeRates.
-            FirstOrDefaultAsync(x => x.Date == date);
+        return await _context.ExchangeRates
+            .Include(x => x.Bank)
+            .Include(x => x.SourceCurrency)
+            .Include(x => x.TargetCurrency)
+            .Where(x => x.Date == date)
+            .ToListAsync();
     }
 
     public async Task<IEnumerable<ExchangeRate>> GetAllExchangeRatesAsync()

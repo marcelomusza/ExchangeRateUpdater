@@ -27,7 +27,7 @@ namespace ExchangeRateUpdater.Application.DTOs.Extensions
             return new ExchangeRate(value.ValidFor,
                                     sourceCurrency,
                                     targetCurrency,
-                                    value.Rate,
+                                    Math.Round(value.Rate, 4),
                                     bankName);
                                                       
         }
@@ -44,6 +44,29 @@ namespace ExchangeRateUpdater.Application.DTOs.Extensions
                 .Select(dto => dto.MapToDB(bankName, sourceCurrency, currencies))
                 .Where(exchangeRate => exchangeRate != null)
                 .ToList();
+        }
+
+        public static ExchangeRateDto MapToDto(this ExchangeRate exchangeRate)
+        {
+            if (exchangeRate == null)
+                return null;
+
+            return new ExchangeRateDto
+            {
+                Date = exchangeRate.Date,
+                SourceCurrency = exchangeRate.SourceCurrency?.Code!,
+                TargetCurrency = exchangeRate.TargetCurrency?.Code!,
+                Value = exchangeRate.Value,
+                BankName = exchangeRate.Bank?.Name!
+            };
+        }
+
+        public static IEnumerable<ExchangeRateDto> MapToDtoCollection(this IEnumerable<ExchangeRate> exchangeRates)
+        {
+            if (exchangeRates == null)
+                return Enumerable.Empty<ExchangeRateDto>();
+
+            return exchangeRates.Select(exchangeRate => exchangeRate.MapToDto()).ToList();
         }
     }
 }

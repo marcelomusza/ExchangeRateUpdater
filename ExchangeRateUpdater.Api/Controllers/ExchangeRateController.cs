@@ -2,6 +2,7 @@
 using ExchangeRateUpdater.Application.Commands;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Extensions;
+using ExchangeRateUpdater.Application.Queries.CzechBank;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,5 +35,20 @@ public class ExchangeRateController : ControllerBase
         }
 
         return BadRequest("Failed to retrieve and process exchange rates.");
+    }
+
+    [HttpGet("czech-bank/getbyday")]
+    public async Task<IActionResult> CzechBankGetDailyExchangeRates([FromQuery] DateTime date)
+    {
+        _logger.LogInformation("Retrieving daily exchange rates for the Czech Bank");
+
+        var exchangeRatesDto = await _mediator.Send(new GetExchangeRateByDayQuery(date));
+
+        if (exchangeRatesDto == null)
+        {
+            return NotFound($"No exchange rates available for the given date: { date }");
+        }
+
+        return Ok(exchangeRatesDto);
     }
 }

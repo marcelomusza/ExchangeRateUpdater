@@ -14,7 +14,8 @@ public class ExchangeRateEntityConfiguration : IEntityTypeConfiguration<Exchange
             .IsRequired();
 
         builder.Property(x => x.Value)
-            .IsRequired();
+            .IsRequired()
+            .HasPrecision(18, 4);
 
         builder.HasOne(x => x.SourceCurrency)
             .WithMany()
@@ -36,5 +37,8 @@ public class ExchangeRateEntityConfiguration : IEntityTypeConfiguration<Exchange
             .WithMany()
             .HasForeignKey(x => x.BankId)
             .IsRequired();
+
+        builder.Property(er => er.BankId)
+            .HasColumnName("Bank");
     }
 }
