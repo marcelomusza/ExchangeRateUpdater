@@ -14,28 +14,34 @@ namespace ExchangeRateUpdater.Application.DTOs.Extensions
                                                       value.Language);
         }
 
-        public static ExchangeRate MapToDB(this CzechBankExchangeRateDto value, string bankName, string sourceCurrency)
+        public static ExchangeRate MapToDB(this CzechBankExchangeRateDto value, 
+                                            Bank bankName, 
+                                            Currency sourceCurrency,
+                                            IEnumerable<Currency> currencies)
         {
             if (value == null)
                 return null;
 
+            var targetCurrency = currencies.First(x => x.Code == value.CurrencyCode);
+
             return new ExchangeRate(value.ValidFor,
-                                    new Currency(sourceCurrency),
-                                    new Currency(value.CurrencyCode),
+                                    sourceCurrency,
+                                    targetCurrency,
                                     value.Rate,
-                                    new Bank(bankName));
+                                    bankName);
                                                       
         }
 
         public static IEnumerable<ExchangeRate> MapToDBCollection(this IEnumerable<CzechBankExchangeRateDto> valueCollection,
-                                                                  string bankName,
-                                                                  string sourceCurrency)
+                                                                  Bank bankName,
+                                                                  Currency sourceCurrency,
+                                                                  IEnumerable<Currency> currencies)
         {
             if (valueCollection == null)
                 return Enumerable.Empty<ExchangeRate>();
 
             return valueCollection
-                .Select(dto => dto.MapToDB(bankName, sourceCurrency))
+                .Select(dto => dto.MapToDB(bankName, sourceCurrency, currencies))
                 .Where(exchangeRate => exchangeRate != null)
                 .ToList();
         }

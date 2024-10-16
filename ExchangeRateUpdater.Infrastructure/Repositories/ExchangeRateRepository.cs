@@ -19,7 +19,6 @@ public class ExchangeRateRepository : IExchangeRateRepository
         try
         {
             await _context.ExchangeRates.AddRangeAsync(exchangeRates);
-            await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception ex)
@@ -32,7 +31,7 @@ public class ExchangeRateRepository : IExchangeRateRepository
     public async Task<ExchangeRate> GetExchangeRatesByDayAsync(DateTime date)
     {
         return await _context.ExchangeRates.
-            FirstOrDefaultAsync(s => s.Date == date);
+            FirstOrDefaultAsync(x => x.Date == date);
     }
 
     public async Task<IEnumerable<ExchangeRate>> GetAllExchangeRatesAsync()
@@ -41,4 +40,36 @@ public class ExchangeRateRepository : IExchangeRateRepository
             .ToListAsync();
     }
 
+    public async Task<Bank> GetOrCreateBankAsync(string bankName)
+    {
+        var existingBank = await _context.Banks.FirstOrDefaultAsync(x => x.Name == bankName);
+
+        if (existingBank != null)
+        {
+            return existingBank;
+        }
+
+        var newBank = new Bank(bankName);
+
+        _context.Banks.Add(newBank);
+
+        return newBank;
+    }
+
+    public async Task<IEnumerable<Currency>> GetCurrenciesListAsync()
+    {
+        return await _context.Currencies
+            .ToListAsync();
+    }
+
+    public async Task<Currency> GetSourceCurrencyAsync(string sourceCurrency)
+    {
+        return await _context.Currencies
+            .FirstOrDefaultAsync(x => x.Code == sourceCurrency);
+    }
+
+    public async Task<bool> HasRatesForDateAsync(DateTime date)
+    {
+        return await _context.ExchangeRates.AnyAsync(x => x.Date == date);
+    }
 }

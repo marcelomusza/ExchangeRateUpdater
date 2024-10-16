@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddTransient<ICzechBankExchangeRateService, CzechBankExchangeRateService>();
 
         services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
