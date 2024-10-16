@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ExchangeRateUpdater.Application.Contracts;
+using ExchangeRateUpdater.Application.Contracts.External;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Enums;
 using ExchangeRateUpdater.Domain.Entities;
@@ -7,7 +7,7 @@ using ExchangeRateUpdater.Infrastructure.Factories;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace ExchangeRateUpdater.Infrastructure.Services;
+namespace ExchangeRateUpdater.Infrastructure.Services.External;
 
 public class CzechBankExchangeRateService : ICzechBankExchangeRateService
 {
@@ -22,7 +22,7 @@ public class CzechBankExchangeRateService : ICzechBankExchangeRateService
 
     public async Task<IEnumerable<CzechBankExchangeRateDto>> GetExchangeRatesAsync(DateTime date, Language language)
     {
-        var response = await _httpClient.GetAsync($"?date={ date.ToString("yyyy-MM-dd") }&lang={ language.ToString() }");
+        var response = await _httpClient.GetAsync($"?date={date.ToString("yyyy-MM-dd")}&lang={language.ToString()}");
 
         if (!response.IsSuccessStatusCode)
         {

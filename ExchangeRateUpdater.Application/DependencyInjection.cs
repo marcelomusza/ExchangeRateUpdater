@@ -1,4 +1,6 @@
 ﻿using ExchangeRateUpdater.Application.Behaviors;
+using ExchangeRateUpdater.Application.Contracts.Services;
+using ExchangeRateUpdater.Application.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +20,8 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddAutoMapper(assembly);
+
+        services.AddScoped<ICzechBankExchangeRateProcessorService, CzechBankExchangeRateProcessorService>();
 
         return services;
     }

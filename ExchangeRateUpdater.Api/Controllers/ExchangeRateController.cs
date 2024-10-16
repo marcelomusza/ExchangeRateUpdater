@@ -1,4 +1,5 @@
-﻿using ExchangeRateUpdater.Application.Commands;
+﻿using ExchangeRateUpdater.Api.Filters;
+using ExchangeRateUpdater.Application.Commands;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Extensions;
 using MediatR;
@@ -20,6 +21,7 @@ public class ExchangeRateController : ControllerBase
     }
 
     [HttpPost("czech-bank/process")]
+    [ApiKey]
     public async Task<IActionResult> CzechBankProcessExchangeRates([FromBody] CzechBankRequestDto dto)
     {
         _logger.LogInformation("Retrieving exchange rates from Czech National Bank Api");

@@ -1,10 +1,13 @@
 ﻿using ExchangeRateUpdater.Application.Configurations;
 using ExchangeRateUpdater.Application.Contracts;
+using ExchangeRateUpdater.Application.Contracts.External;
+using ExchangeRateUpdater.Application.Services;
 using ExchangeRateUpdater.Domain.Interfaces;
 using ExchangeRateUpdater.Infrastructure.Data;
 using ExchangeRateUpdater.Infrastructure.Factories;
+using ExchangeRateUpdater.Infrastructure.Jobs;
 using ExchangeRateUpdater.Infrastructure.Repositories;
-using ExchangeRateUpdater.Infrastructure.Services;
+using ExchangeRateUpdater.Infrastructure.Services.External;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,11 +38,13 @@ public static class DependencyInjection
         services.Configure<Dictionary<string, BankApiConfig>>(configuration.GetSection("BankApis"));
         services.AddHttpClient();
         services.AddSingleton<IBankApiHttpClientFactory, BankApiHttpClientFactory>();
+        services.AddSingleton<IExchangeRateJobScheduler, ExchangeRateJobScheduler>();
 
         services.AddTransient<ICzechBankExchangeRateService, CzechBankExchangeRateService>();
 
         services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        
 
         return services;
     }
