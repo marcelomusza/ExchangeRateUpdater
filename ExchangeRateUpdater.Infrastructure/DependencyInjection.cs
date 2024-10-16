@@ -1,7 +1,11 @@
 ﻿using ExchangeRateUpdater.Application.Configurations;
 using ExchangeRateUpdater.Application.Contracts;
+using ExchangeRateUpdater.Domain.Interfaces;
+using ExchangeRateUpdater.Infrastructure.Data;
 using ExchangeRateUpdater.Infrastructure.Factories;
+using ExchangeRateUpdater.Infrastructure.Repositories;
 using ExchangeRateUpdater.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +15,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var assembly = typeof(DependencyInjection).Assembly;        
+        var assembly = typeof(DependencyInjection).Assembly;
 
         //services.AddHttpClient("CzechBank", client =>
         //{
@@ -23,11 +27,18 @@ public static class DependencyInjection
         //    client.BaseAddress = new Uri(bankApis["ArgentinaBank:BaseAddress"]!);
         //});
 
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
         services.Configure<Dictionary<string, BankApiConfig>>(configuration.GetSection("BankApis"));
         services.AddHttpClient();
         services.AddSingleton<IBankApiHttpClientFactory, BankApiHttpClientFactory>();
 
         services.AddTransient<ICzechBankExchangeRateService, CzechBankExchangeRateService>();
+
+        services.AddScoped<IExchangeRateRepository, ExchangeRateRepository>();
 
         return services;
     }

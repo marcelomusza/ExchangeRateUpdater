@@ -1,4 +1,7 @@
 ﻿using ExchangeRateUpdater.Application.Contracts;
+using ExchangeRateUpdater.Application.DTOs.Extensions;
+using ExchangeRateUpdater.Domain.Interfaces;
+using ExchangeRateUpdater.Domain.Model;
 using MediatR;
 
 namespace ExchangeRateUpdater.Application.Commands;
@@ -6,10 +9,16 @@ namespace ExchangeRateUpdater.Application.Commands;
 public class CzechBankExchangeRatesCommandHandler : IRequestHandler<CzechBankExchangeRatesCommand, bool>
 {
     private readonly ICzechBankExchangeRateService _exchangeRateService;
+    private readonly IExchangeRateRepository _exchangeRateRepository;
 
-    public CzechBankExchangeRatesCommandHandler(ICzechBankExchangeRateService exchangeRateService)
+    private const string BankName = "CzechBank";
+    private const string SourceCurrency = "CZK";
+
+    public CzechBankExchangeRatesCommandHandler(ICzechBankExchangeRateService exchangeRateService,
+        IExchangeRateRepository exchangeRateRepository)
     {
         _exchangeRateService = exchangeRateService;
+        _exchangeRateRepository = exchangeRateRepository;
     }
 
     public async Task<bool> Handle(CzechBankExchangeRatesCommand request, CancellationToken cancellationToken)
@@ -17,10 +26,11 @@ public class CzechBankExchangeRatesCommandHandler : IRequestHandler<CzechBankExc
 
         var exchangeRates = await _exchangeRateService.GetExchangeRatesAsync(request.Date, request.Language);
 
-        // TODO: Add processing logic here if needed
+        var rates = exchangeRates.MapToDBCollection(BankName, SourceCurrency);
 
-        // In the future, you would save the data to the database here
-        // For now, simply return true to indicate success
-        return true;
+        var result = await _exchangeRateRepository.AddExchangeRatesAsync(rates);
+        
+
+        return result;
     }
 }

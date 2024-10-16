@@ -1,8 +1,7 @@
-using Serilog;
+using ExchangeRateUpdater.Api.Middleware;
 using ExchangeRateUpdater.Application;
 using ExchangeRateUpdater.Infrastructure;
-using Microsoft.AspNetCore.Diagnostics;
-using ExchangeRateUpdater.Api.Middleware;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
