@@ -2,20 +2,20 @@
 
 public class ExchangeRate
 {
-    public int Id { get; private set; }
+    public int Id { get; set; }
 
-    public DateTime Date { get; private set; }
+    public DateTime Date { get; set; }
 
-    public int SourceCurrencyId { get; private set; }
-    public Currency SourceCurrency { get; private set; }
+    public int SourceCurrencyId { get;  set; }
+    public Currency SourceCurrency { get; set; }
 
-    public int TargetCurrencyId { get; private set; }
-    public Currency TargetCurrency { get; private set; }
+    public int TargetCurrencyId { get; set; }
+    public Currency TargetCurrency { get; set; }
 
-    public decimal Value { get; private set; }
+    public decimal Value { get; set; }
 
-    public int BankId { get; private set; }
-    public Bank Bank { get; private set; }
+    public int BankId { get; set; }
+    public Bank Bank { get; set; }
 
     protected ExchangeRate() { }
 

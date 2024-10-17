@@ -5,7 +5,6 @@ using ExchangeRateUpdater.Application.DTOs.Enums;
 using ExchangeRateUpdater.Domain.Entities;
 using ExchangeRateUpdater.Infrastructure.Factories;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace ExchangeRateUpdater.Infrastructure.Services.External;
 

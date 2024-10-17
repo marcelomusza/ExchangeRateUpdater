@@ -4,7 +4,7 @@ public class Bank
 {
     public int Id { get; set; }
 
-    public string Name { get; private set; }
+    public string Name { get; set; }
 
     public Bank(string name)
     {

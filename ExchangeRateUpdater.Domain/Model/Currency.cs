@@ -14,7 +14,7 @@ public class Currency
         Code = code;
     }
 
-    public string Code { get; private set; }
+    public string Code { get; set; }
 
     public override string ToString() => Code;
 }
