@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddAutoMapper(assembly);
 
         services.AddScoped<ICzechBankExchangeRateProcessorService, CzechBankExchangeRateProcessorService>();
+        services.AddScoped<ICzechBankExchangeRateQueryService, CzechBankExchangeRateQueryService>();
 
         return services;
     }

@@ -32,5 +32,5 @@ public class ExchangeRate
         Bank = bank;
     }
 
-    public override string ToString() => $"{Bank.Name} - {Date.ToShortDateString()}: {SourceCurrency}/{TargetCurrency} = {Value}";
+    public override string ToString() => $"{Date.ToShortDateString()}: {SourceCurrency}/{TargetCurrency} = {Value}";
 }

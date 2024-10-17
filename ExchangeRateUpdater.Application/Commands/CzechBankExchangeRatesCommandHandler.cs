@@ -14,6 +14,6 @@ public class CzechBankExchangeRatesCommandHandler : IRequestHandler<CzechBankExc
 
     public async Task<bool> Handle(CzechBankExchangeRatesCommand request, CancellationToken cancellationToken)
     {
-        return await _processorService.ProcessExchangeRatesAsync(request.Date, request.Language);
+        return await _processorService.ProcessExchangeRatesAsync(request.BankId, request.Date, request.Language);
     }
 }

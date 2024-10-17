@@ -21,7 +21,7 @@ public class ExchangeRateJobScheduler : IExchangeRateJobScheduler
         RecurringJob.AddOrUpdate(
             "czech-bank-daily-exchange-rate-update",
             () => CzechBankExecuteExchangeRateUpdate(DateTime.UtcNow.Date, Language.EN),
-            Cron.Minutely);
+            Cron.Daily);
     }
 
     public async Task CzechBankExecuteExchangeRateUpdate(DateTime date, Language language)
@@ -29,6 +29,6 @@ public class ExchangeRateJobScheduler : IExchangeRateJobScheduler
         using var scope = _serviceProvider.CreateScope();
         var processorService = scope.ServiceProvider.GetRequiredService<ICzechBankExchangeRateProcessorService>();
 
-        await processorService.ProcessExchangeRatesAsync(date, language);
+        await processorService.ProcessExchangeRatesAsync(1, date, language);
     }
 }

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace ExchangeRateUpdater.Application.Queries.CzechBank;
 
-public record GetExchangeRateByDayQuery(int BankId, DateTime Date) : IRequest<IEnumerable<ExchangeRateDto>>;
+public record GetExchangeRatesQuery(int BankId, IEnumerable<CurrencyDto> CurrencyCodes) : IRequest<ExchangeRateResponseDto>;

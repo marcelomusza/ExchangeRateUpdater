@@ -10,8 +10,9 @@ namespace ExchangeRateUpdater.Application.DTOs.Extensions
             if (value == null)
                 return null;
 
-            return new CzechBankExchangeRatesCommand(value.Date,
-                                                      value.Language);
+            return new CzechBankExchangeRatesCommand(value.BankId,
+                                                     value.Date,
+                                                     value.Language);
         }
 
         public static ExchangeRate MapToDB(this CzechBankExchangeRateDto value, 

@@ -1,8 +1,10 @@
 ﻿using ExchangeRateUpdater.Application.Contracts.External;
 using ExchangeRateUpdater.Application.Contracts.Services;
+using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Enums;
 using ExchangeRateUpdater.Application.DTOs.Extensions;
 using ExchangeRateUpdater.Domain.Interfaces;
+using MediatR;
 
 namespace ExchangeRateUpdater.Application.Services;
 
@@ -26,19 +28,19 @@ public class CzechBankExchangeRateProcessorService : ICzechBankExchangeRateProce
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<bool> ProcessExchangeRatesAsync(DateTime date, Language language)
+    public async Task<bool> ProcessExchangeRatesAsync(int bankId, DateTime date, Language language)
     {
         // Prevent duplicate processing for the same date
-        if (await _exchangeRateRepository.HasRatesForDateAsync(date))
+        if (await _exchangeRateRepository.HasRatesForDateAsync(bankId, date))
         {
             return false;
         }
 
-       
+        var bank = await _unitOfWork.ExchangeRateRepository.GetBankAsync(bankId);
         var exchangeRates = await _exchangeRateService.GetExchangeRatesAsync(date, language);
         var currencies = await _unitOfWork.ExchangeRateRepository.GetCurrenciesListAsync();
         var sourceCurrency = await _unitOfWork.ExchangeRateRepository.GetSourceCurrencyAsync(SourceCurrency);
-        var bank = await _unitOfWork.ExchangeRateRepository.GetOrCreateBankAsync(BankName);
+        
 
         var rates = exchangeRates.MapToDBCollection(bank, sourceCurrency, currencies);
 
@@ -46,4 +48,5 @@ public class CzechBankExchangeRateProcessorService : ICzechBankExchangeRateProce
 
         return await _unitOfWork.SaveChangesAsync();
     }
+
 }

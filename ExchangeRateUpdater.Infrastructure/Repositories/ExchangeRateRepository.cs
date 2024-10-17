@@ -28,13 +28,13 @@ public class ExchangeRateRepository : IExchangeRateRepository
         }
     }
 
-    public async Task<IEnumerable<ExchangeRate>> GetExchangeRatesByDayAsync(DateTime date)
+    public async Task<IEnumerable<ExchangeRate>> GetExchangeRatesByDayAsync(int bankId, DateTime date)
     {
         return await _context.ExchangeRates
             .Include(x => x.Bank)
             .Include(x => x.SourceCurrency)
             .Include(x => x.TargetCurrency)
-            .Where(x => x.Date == date)
+            .Where(x => x.Date == date && x.BankId == bankId)
             .ToListAsync();
     }
 
@@ -44,20 +44,16 @@ public class ExchangeRateRepository : IExchangeRateRepository
             .ToListAsync();
     }
 
-    public async Task<Bank> GetOrCreateBankAsync(string bankName)
+    public async Task<Bank> GetBankAsync(int bankId)
     {
-        var existingBank = await _context.Banks.FirstOrDefaultAsync(x => x.Name == bankName);
+        var bank = await _context.Banks.FirstOrDefaultAsync(x => x.Id == bankId);
 
-        if (existingBank != null)
+        if (bank == null)
         {
-            return existingBank;
-        }
+            return null;
+        }       
 
-        var newBank = new Bank(bankName);
-
-        _context.Banks.Add(newBank);
-
-        return newBank;
+        return bank;
     }
 
     public async Task<IEnumerable<Currency>> GetCurrenciesListAsync()
@@ -72,8 +68,19 @@ public class ExchangeRateRepository : IExchangeRateRepository
             .FirstOrDefaultAsync(x => x.Code == sourceCurrency);
     }
 
-    public async Task<bool> HasRatesForDateAsync(DateTime date)
+    public async Task<bool> HasRatesForDateAsync(int bankId, DateTime date)
     {
-        return await _context.ExchangeRates.AnyAsync(x => x.Date == date);
+        return await _context.ExchangeRates.AnyAsync(x => x.Date == date 
+                                                       && x.BankId == bankId);
+    }
+
+    public async Task<IEnumerable<ExchangeRate>> GetExchangeRatesByBankAsync(int bankId)
+    {
+        return await _context.ExchangeRates
+            .Include(x => x.Bank)
+            .Include(x => x.SourceCurrency)
+            .Include(x => x.TargetCurrency)
+            .Where(x => x.BankId == bankId)
+            .ToListAsync();
     }
 }

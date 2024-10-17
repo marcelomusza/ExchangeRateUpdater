@@ -1,4 +1,5 @@
 ﻿using ExchangeRateUpdater.Domain.Model;
+using ExchangeRateUpdater.Infrastructure.EntityConfigurations.Seed;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,5 +14,7 @@ public class BankEntityConfiguration : IEntityTypeConfiguration<Bank>
         builder.Property(b => b.Name)
             .IsRequired()
             .HasMaxLength(100);
+
+        builder.HasData(BankSeed.GetBanks());
     }
 }

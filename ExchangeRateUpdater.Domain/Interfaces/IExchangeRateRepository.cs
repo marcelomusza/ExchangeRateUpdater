@@ -6,11 +6,12 @@ public interface IExchangeRateRepository
 {
     Task<bool> AddExchangeRatesAsync(IEnumerable<ExchangeRate> exchangeRates);
 
-    Task<IEnumerable<ExchangeRate>> GetExchangeRatesByDayAsync(DateTime date);
+    Task<IEnumerable<ExchangeRate>> GetExchangeRatesByDayAsync(int bankId, DateTime date);
 
     Task<IEnumerable<ExchangeRate>> GetAllExchangeRatesAsync();
-    Task<Bank> GetOrCreateBankAsync(string bankName);
+    Task<Bank> GetBankAsync(int bankId);
     Task<IEnumerable<Currency>> GetCurrenciesListAsync();
     Task<Currency> GetSourceCurrencyAsync(string sourceCurrency);
-    Task<bool> HasRatesForDateAsync(DateTime date);
+    Task<bool> HasRatesForDateAsync(int bankId, DateTime date);
+    Task<IEnumerable<ExchangeRate>> GetExchangeRatesByBankAsync(int bankId);
 }

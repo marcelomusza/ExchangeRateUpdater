@@ -1,5 +1,4 @@
 ﻿using ExchangeRateUpdater.Api.Filters;
-using ExchangeRateUpdater.Application.Commands;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Extensions;
 using ExchangeRateUpdater.Application.Queries.CzechBank;
@@ -9,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExchangeRateUpdater.Api.Controllers;
 
 [ApiController]
-[Route("api/exchange-rate")]
+[Route("api/exchange-rate/czech-bank")]
 public class ExchangeRateController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -21,12 +20,10 @@ public class ExchangeRateController : ControllerBase
         _logger = logger;
     }
 
-    [HttpPost("czech-bank/process")]
+    [HttpPost("process")]
     [ApiKey]
     public async Task<IActionResult> CzechBankProcessExchangeRates([FromBody] CzechBankRequestDto dto)
     {
-        _logger.LogInformation("Retrieving exchange rates from Czech National Bank Api");
-
         var result = await _mediator.Send(dto.Map());
 
         if (result)
@@ -37,12 +34,10 @@ public class ExchangeRateController : ControllerBase
         return BadRequest("Failed to retrieve and process exchange rates.");
     }
 
-    [HttpGet("czech-bank/getbyday")]
-    public async Task<IActionResult> CzechBankGetDailyExchangeRates([FromQuery] DateTime date)
+    [HttpGet("{bankId:int}/daily")]
+    public async Task<IActionResult> CzechBankGetDailyExchangeRates(int bankId, [FromQuery] DateTime date)
     {
-        _logger.LogInformation("Retrieving daily exchange rates for the Czech Bank");
-
-        var exchangeRatesDto = await _mediator.Send(new GetExchangeRateByDayQuery(date));
+        var exchangeRatesDto = await _mediator.Send(new GetExchangeRateByDayQuery(bankId, date));
 
         if (exchangeRatesDto == null)
         {
@@ -50,5 +45,24 @@ public class ExchangeRateController : ControllerBase
         }
 
         return Ok(exchangeRatesDto);
+    }
+
+    [HttpGet("{bankId:int}/exchange-rates")]
+    public async Task<IActionResult> CzechBankExchangeRates(int bankId, [FromQuery] string currencyCodes)
+    {
+        if (string.IsNullOrWhiteSpace(currencyCodes))
+        {
+            return BadRequest("Currency codes are required.");
+        }
+
+        var currencyList = currencyCodes.Split(',').Select(code => new CurrencyDto { Code = code });
+        var response = await _mediator.Send(new GetExchangeRatesQuery(bankId, currencyList));
+
+        if (response == null)
+        {
+            return NotFound("No exchange rates available for the given currencies.");
+        }
+
+        return Ok(response);
     }
 }
