@@ -21,4 +21,6 @@ COPY . .
 RUN dotnet build -c Release --no-restore
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
+ENV ASPNETCORE_URLS=http://+:80
+
 ENTRYPOINT ["dotnet", "/app/publish/ExchangeRateUpdater.Api.dll"]

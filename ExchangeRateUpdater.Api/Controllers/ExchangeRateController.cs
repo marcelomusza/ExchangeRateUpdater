@@ -4,6 +4,7 @@ using ExchangeRateUpdater.Application.DTOs.Extensions;
 using ExchangeRateUpdater.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace ExchangeRateUpdater.Api.Controllers;
 
@@ -48,6 +49,7 @@ public class ExchangeRateController : ControllerBase
     }
 
     [HttpGet("{bankId:int}/exchange-rates")]
+    [EnableRateLimiting("ConcurrencyPolicy")]
     public async Task<IActionResult> CzechBankExchangeRates(int bankId, [FromQuery] string currencyCodes)
     {
         if (string.IsNullOrWhiteSpace(currencyCodes))

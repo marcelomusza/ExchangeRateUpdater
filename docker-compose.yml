@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   api:
     build:
@@ -7,9 +6,13 @@ services:
     environment:
       - BankApis__CzechBank__BaseAddress=https://api.cnb.cz/cnbapi/exrates/daily
       - ConnectionStrings__DefaultConnection=server=db;database=MewsTestDB;user=root;password=MewsTest1234
-      - ApiKey=a12345
+      - ConnectionStrings__HangfireConnection=server=db;database=MewsTestDB;user=root;password=MewsTest1234
+      - ApiKey=MewsTest
     ports:
-      - "5094:8080"
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.0
@@ -20,7 +23,13 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     ports:
-      - "3306:3306"  
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s       
+      timeout: 5s         
+      retries: 3          
+      start_period: 30s   
 
 volumes:
   db_data:

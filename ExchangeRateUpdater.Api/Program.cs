@@ -2,6 +2,8 @@ using ExchangeRateUpdater.Api.Middleware;
 using ExchangeRateUpdater.Application;
 using ExchangeRateUpdater.Application.Contracts;
 using ExchangeRateUpdater.Infrastructure;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using Hangfire;
 using Hangfire.MySql;
 using Serilog;
@@ -18,6 +20,16 @@ builder.Host.UseSerilog((context, configuration) =>
         .ReadFrom.Configuration(context.Configuration)
         .Enrich.FromLogContext()
         .WriteTo.Console();
+});
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddConcurrencyLimiter("ConcurrencyPolicy", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 25;
+        limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        limiterOptions.QueueLimit = 5;
+    });
 });
 
 builder.Services.AddApplication()
@@ -53,6 +65,8 @@ app.UseHttpsRedirection();
 app.UseHangfireDashboard();
 
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 
