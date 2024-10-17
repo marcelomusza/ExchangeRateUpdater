@@ -37,8 +37,8 @@ public class CzechBankExchangeRateQueryService : ICzechBankExchangeRateQueryServ
         var allExchangeRates = await _exchangeRateRepository.GetExchangeRatesByBankAsync(bankId);
 
         var filteredRates = allExchangeRates
-                                .Where(rate => rate.SourceCurrency.Code == SourceCurrency 
-                                            && currencyCodes.Any(c => c.Code == rate.TargetCurrency.Code)) 
+                                .Where(rate => rate.SourceCurrency.Code.Equals(SourceCurrency, StringComparison.OrdinalIgnoreCase)
+                                            && currencyCodes.Any(c => c.Code.Equals(rate.TargetCurrency.Code, StringComparison.OrdinalIgnoreCase))) 
                                 .ToList();
 
         // Map to the response DTO

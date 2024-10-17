@@ -1,5 +1,4 @@
-﻿using ExchangeRateUpdater.Application.Behaviors;
-using ExchangeRateUpdater.Application.Contracts.Services;
+﻿using ExchangeRateUpdater.Application.Contracts.Services;
 using ExchangeRateUpdater.Application.Services;
 using FluentValidation;
 using MediatR;

@@ -1,7 +1,7 @@
 ﻿using ExchangeRateUpdater.Api.Filters;
 using ExchangeRateUpdater.Application.DTOs;
 using ExchangeRateUpdater.Application.DTOs.Extensions;
-using ExchangeRateUpdater.Application.Queries.CzechBank;
+using ExchangeRateUpdater.Application.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -37,7 +37,7 @@ public class ExchangeRateController : ControllerBase
     [HttpGet("{bankId:int}/daily")]
     public async Task<IActionResult> CzechBankGetDailyExchangeRates(int bankId, [FromQuery] DateTime date)
     {
-        var exchangeRatesDto = await _mediator.Send(new GetExchangeRateByDayQuery(bankId, date));
+        var exchangeRatesDto = await _mediator.Send(new CzechBankGetExchangeRateByDayQuery(bankId, date));
 
         if (exchangeRatesDto == null)
         {
@@ -56,7 +56,7 @@ public class ExchangeRateController : ControllerBase
         }
 
         var currencyList = currencyCodes.Split(',').Select(code => new CurrencyDto { Code = code });
-        var response = await _mediator.Send(new GetExchangeRatesQuery(bankId, currencyList));
+        var response = await _mediator.Send(new CzechBankGetExchangeRatesQuery(bankId, currencyList));
 
         if (response == null)
         {

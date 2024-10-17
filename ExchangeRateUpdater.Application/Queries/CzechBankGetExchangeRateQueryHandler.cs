@@ -5,16 +5,16 @@ using ExchangeRateUpdater.Application.DTOs.Extensions;
 using ExchangeRateUpdater.Domain.Interfaces;
 using MediatR;
 
-namespace ExchangeRateUpdater.Application.Queries.CzechBank;
+namespace ExchangeRateUpdater.Application.Queries;
 
-public class GetExchangeRateQueryHandler : IRequestHandler<GetExchangeRateByDayQuery, IEnumerable<ExchangeRateDto>>,
-                                           IRequestHandler<GetExchangeRatesQuery, ExchangeRateResponseDto>
+public class CzechBankGetExchangeRateQueryHandler : IRequestHandler<CzechBankGetExchangeRateByDayQuery, IEnumerable<ExchangeRateDto>>,
+                                           IRequestHandler<CzechBankGetExchangeRatesQuery, ExchangeRateResponseDto>
 {
     private readonly ICzechBankExchangeRateQueryService _processorService;
     private readonly IExchangeRateRepository _exchangeRateRepository;
     private readonly IMapper _mapper;
 
-    public GetExchangeRateQueryHandler(ICzechBankExchangeRateQueryService processorService,
+    public CzechBankGetExchangeRateQueryHandler(ICzechBankExchangeRateQueryService processorService,
                                        IExchangeRateRepository exchangeRateRepository,
                                        IMapper mapper)
     {
@@ -22,12 +22,12 @@ public class GetExchangeRateQueryHandler : IRequestHandler<GetExchangeRateByDayQ
         _mapper = mapper;
         _processorService = processorService;
     }
-    public async Task<IEnumerable<ExchangeRateDto>> Handle(GetExchangeRateByDayQuery request, CancellationToken cancellationToken)
-    {        
+    public async Task<IEnumerable<ExchangeRateDto>> Handle(CzechBankGetExchangeRateByDayQuery request, CancellationToken cancellationToken)
+    {
         return await _processorService.GetExchangeRateByDayAsync(request.BankId, request.Date);
     }
 
-    public async Task<ExchangeRateResponseDto> Handle(GetExchangeRatesQuery request, CancellationToken cancellationToken)
+    public async Task<ExchangeRateResponseDto> Handle(CzechBankGetExchangeRatesQuery request, CancellationToken cancellationToken)
     {
         return await _processorService.GetExchangeRatesAsync(request.BankId, request.CurrencyCodes);
     }
